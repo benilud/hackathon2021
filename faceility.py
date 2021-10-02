@@ -15,8 +15,12 @@ def DrawLandmark(index, image):
   return (coordX, coordY)
 
 def Ifface(p1, p2, p3):
-  d1 = (np.sqrt((p1[0]-p2[0])**2+(p1[1]-p2[1])**2))
-  d2 = (np.sqrt((p1[0]-p3[0])**2+(p1[1]-p3[1])**2))
+  def dist(p1,p2):
+    return (np.sqrt((p1[0]-p2[0])**2+(p1[1]-p2[1])**2))
+
+  height, width = image.shape[:2]
+  d1 = dist(p1,p2)
+  d2 = dist(p1,p3)
   thresh = np.abs(d2-d1)
   if thresh>10:
     return False
