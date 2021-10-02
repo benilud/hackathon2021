@@ -14,15 +14,18 @@ def DrawLandmark(index, image):
   cv2.circle(image, (coordX, coordY), RADIUS, (0, 255, 0), -RADIUS)
   return (coordX, coordY)
 
-def Ifface(p1, p2, p3):
-  def dist(p1,p2):
-    return (np.sqrt((p1[0]-p2[0])**2+(p1[1]-p2[1])**2))
+def Ifface(pmiddle, pright, pleft): #test face = front with 3 points p(x,y)
 
-  height, width = image.shape[:2]
-  d1 = dist(p1,p2)
-  d2 = dist(p1,p3)
+  def dist(pmiddle,pright):
+    return (np.sqrt((pmiddle[0]-pright[0])**2+(pmiddle[1]-pright[1])**2))
+
+  d1 = (dist(pmiddle,pright)/dist(pright,pleft))*100
+  d2 =(dist(pmiddle,pleft)/dist(pright,pleft))*100
   thresh = np.abs(d2-d1)
-  if thresh>10:
+  lim_treshold = 10 #fix sensibility of the detection
+  lim_treshold = (lim_treshold/dist(pright,pleft))*100
+
+  if thresh > lim_treshold:
     return False
   else:
     return True
