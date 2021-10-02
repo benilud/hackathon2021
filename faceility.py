@@ -14,15 +14,36 @@ def DrawLandmark(index, image):
   cv2.circle(image, (coordX, coordY), RADIUS, (0, 255, 0), -RADIUS)
   return (coordX, coordY)
 
-def Ifface(p1, p2, p3):
-  d1 = (np.sqrt((p1[0]-p2[0])**2+(p1[1]-p2[1])**2))
-  d2 = (np.sqrt((p1[0]-p3[0])**2+(p1[1]-p3[1])**2))
+def Ifface(pmiddle, pright, pleft): #test face = front with 3 points p(x,y)
+  LIM_TRESHOLD = 25 #fix sensibility of the detection
+
+  def dist(pmiddle,pright):
+    return (np.sqrt((pmiddle[0]-pright[0])**2+(pmiddle[1]-pright[1])**2))
+
+  d1 = (dist(pmiddle,pright)/dist(pright,pleft))*100
+  d2 =(dist(pmiddle,pleft)/dist(pright,pleft))*100
   thresh = np.abs(d2-d1)
-  if thresh>10:
+  
+  if thresh > LIM_TRESHOLD:
     return False
   else:
     return True
-  
+
+def Displayalert(image):
+  RECTANGLE_BGR = (255, 255, 255)
+  OFFSET_BGRD = 10
+  FONT = cv2.FONT_HERSHEY_SIMPLEX
+  TEXT = 'Merci de vous mettre de face'
+
+  height, width = image.shape[:2]
+  textsize = cv2.getTextSize(TEXT, FONT, 1, 2)[0]
+  textX = int((width - textsize[0]) / 2)
+  textY = int((height - textsize[1]) / 2)
+
+  box_coords = ((textX - OFFSET_BGRD, textY + OFFSET_BGRD), (textX + textsize[0] + OFFSET_BGRD, textY - textsize[1] - OFFSET_BGRD))
+  cv2.rectangle(image, box_coords[0], box_coords[1], RECTANGLE_BGR, cv2.FILLED)
+  image = cv2.putText(image, TEXT, (textX,textY), FONT, 1, (0,0,255), 2)
+  cv2.imshow('MediaPipe FaceMesh', image)  
 
 
 # For webcam input:
@@ -54,7 +75,8 @@ with mp_face_mesh.FaceMesh(
         leftEye = DrawLandmark(359, image)
         rightEye = DrawLandmark(130, image)
         middle = DrawLandmark(168, image)
-        print(Ifface(middle,rightEye,leftEye))      
+        if (Ifface(middle,rightEye,leftEye)==False):
+          Displayalert(image)
         
     cv2.imshow('MediaPipe FaceMesh', image)
     if cv2.waitKey(5) & 0xFF == 27:
