@@ -5,6 +5,8 @@ mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
 mp_face_mesh = mp.solutions.face_mesh
 
+CAMERA = 1
+
 def DrawLandmark(index, image):
   RADIUS = 3
   coords = results.multi_face_landmarks[0].landmark[index]
@@ -47,7 +49,7 @@ def Displayalert(image):
 
 
 # For webcam input:
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(CAMERA)
 with mp_face_mesh.FaceMesh(
     min_detection_confidence=0.5,
     min_tracking_confidence=0.5) as face_mesh:
