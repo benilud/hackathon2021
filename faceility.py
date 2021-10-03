@@ -14,8 +14,10 @@ mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
 mp_face_mesh = mp.solutions.face_mesh
 
+LINE_WIDTH = 2
+
 def DrawLandmark(index, image):
-  RADIUS = 3
+  #RADIUS = 3
   coords = results.multi_face_landmarks[0].landmark[index]
   height, width = image.shape[:2]
   coordX = int(coords.x*width)
@@ -72,7 +74,7 @@ def parallel(point1, point2, offset, nb_line, image):
     P1 = linePoints((point1[0]+offsetX*i, point1[1]+offsetY*i), (point2[0]+offsetX*i, point2[1]+offsetY*i), image)[0]
     P2 = linePoints((point1[0]+offsetX*i, point1[1]+offsetY*i), (point2[0]+offsetX*i, point2[1]+offsetY*i), image)[1]
     
-    cv2.line(image,P1,P2,(255,0,0),1)
+    cv2.line(image,P1,P2,(255,0,0),LINE_WIDTH)
 
 def Ifface(pmiddle, pright, pleft): #test face = front with 3 points p(x,y)
   LIM_TRESHOLD = 25 #fix sensibility of the detection
@@ -107,6 +109,9 @@ def Displayalert(image):
 
 # For webcam input:
 cap = cv2.VideoCapture(CAMERA)
+cap.set(3, 1920)
+cap.set(4, 1080)
+
 with mp_face_mesh.FaceMesh(
     min_detection_confidence=0.5,
     min_tracking_confidence=0.5) as face_mesh:
@@ -144,7 +149,7 @@ with mp_face_mesh.FaceMesh(
       else:
         
         lineP = linePoints(leftEye,rightEye,image)
-        cv2.line(image,lineP[0],lineP[1],(0,255,0),1)
+        cv2.line(image,lineP[0],lineP[1],(0,255,0),LINE_WIDTH)
         parallel(leftEye,rightEye,3,10,image)
         pente = lineP[2]  
       
@@ -157,8 +162,10 @@ with mp_face_mesh.FaceMesh(
         coord3 = (x3,y3)
 
         linePerpCoords = linePerp(coord3, pente, image)
-        cv2.line(image,linePerpCoords[0],linePerpCoords[1],(0,255,0),1)
-        
+        cv2.line(image,linePerpCoords[0],linePerpCoords[1],(0,255,0),LINE_WIDTH)
+      
+
+    cv2.namedWindow('Face ILITY viewer', cv2.WINDOW_NORMAL)
     cv2.imshow('Face ILITY viewer', image)
     if cv2.waitKey(5) & 0xFF == 27:
       break
