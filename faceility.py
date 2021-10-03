@@ -1,6 +1,15 @@
 import cv2
 import mediapipe as mp
 import numpy as np
+import sys
+
+
+if len(sys.argv) == 1 :
+  CAMERA = 0
+else :
+  CAMERA = int(sys.argv[1])
+
+
 mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
 mp_face_mesh = mp.solutions.face_mesh
@@ -84,7 +93,7 @@ def Displayalert(image):
   RECTANGLE_BGR = (255, 255, 255)
   OFFSET_BGRD = 10
   FONT = cv2.FONT_HERSHEY_SIMPLEX
-  TEXT = 'Merci de vous mettre de face'
+  TEXT = 'Merci de mettre le patient de face'
 
   height, width = image.shape[:2]
   textsize = cv2.getTextSize(TEXT, FONT, 1, 2)[0]
@@ -94,11 +103,10 @@ def Displayalert(image):
   box_coords = ((textX - OFFSET_BGRD, textY + OFFSET_BGRD), (textX + textsize[0] + OFFSET_BGRD, textY - textsize[1] - OFFSET_BGRD))
   cv2.rectangle(image, box_coords[0], box_coords[1], RECTANGLE_BGR, cv2.FILLED)
   image = cv2.putText(image, TEXT, (textX,textY), FONT, 1, (0,0,255), 2)
-  cv2.imshow('MediaPipe FaceMesh', image)  
 
 
 # For webcam input:
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(CAMERA)
 with mp_face_mesh.FaceMesh(
     min_detection_confidence=0.5,
     min_tracking_confidence=0.5) as face_mesh:
@@ -151,7 +159,7 @@ with mp_face_mesh.FaceMesh(
         linePerpCoords = linePerp(coord3, pente, image)
         cv2.line(image,linePerpCoords[0],linePerpCoords[1],(0,255,0),1)
         
-    cv2.imshow('MediaPipe FaceMesh', image)
+    cv2.imshow('Face ILITY viewer', image)
     if cv2.waitKey(5) & 0xFF == 27:
       break
 cap.release()
