@@ -4,10 +4,9 @@ import numpy as np
 import sys
 
 
-if len(sys.argv) == 1 :
-  CAMERA = 0
-else :
-  CAMERA = int(sys.argv[1])
+CAMERA = 0
+if '1' in sys.argv: CAMERA = 1
+if '2' in sys.argv: CAMERA = 2
 
 
 mp_drawing = mp.solutions.drawing_utils
@@ -112,6 +111,7 @@ cap = cv2.VideoCapture(CAMERA)
 cap.set(3, 1920)
 cap.set(4, 1080)
 
+
 with mp_face_mesh.FaceMesh(
     min_detection_confidence=0.5,
     min_tracking_confidence=0.5) as face_mesh:
@@ -133,6 +133,7 @@ with mp_face_mesh.FaceMesh(
     # Draw the face mesh annotations on the image.
     image.flags.writeable = True
     image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+    if 'flip' in sys.argv: image = cv2.flip(image,1)
 
     height, width = image.shape[:2]
 
